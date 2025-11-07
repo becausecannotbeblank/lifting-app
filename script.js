@@ -28,10 +28,14 @@ function updateRepMode() {
   if (repNumber.checked) {
     repCustom.hidden = false;  // show custom reps
     repRange.hidden  = true;   // hide slider
+    repMin.hidden = true;
+    repMax.hidden = true; 
     if (repRangeValue) repRangeValue.hidden = true;
   } else {
     repCustom.hidden = true;   // hide custom reps
     repRange.hidden  = false;  // show slider
+    repMin.hidden = false;
+    repMax.hidden = false; 
     if (repRangeValue) repRangeValue.hidden = false;
   }
 }
