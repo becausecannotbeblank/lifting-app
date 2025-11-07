@@ -1,47 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lifting App</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lifting App</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
 
-    <button>Menu</button> <!--Settings i.e. KG/lbs-->
+  <button>Menu</button> <!-- later: KG/lbs, etc -->
 
-    <fieldset>
-        <h3>Exercises</h3>
-        <button id="add-exercise">+ Add Exercise</button> <!--Add exercise to repertoire-->
-        <fieldset id="set-exercise">
-            <input type="radio" id="rep-number" name="set-reps" value="rep-number" checked>
-            <label for="rep-number">Set Amount</label>
+  <fieldset>
+    <h3>Routine</h3>
 
-            <input type="radio" id="rep-set-range" name="set-reps" value="rep-set-range">
-            <label for="rep-set-range">Set Range</label>
+    <!-- Where routine exercises appear -->
+    <div id="routine-list"></div>
 
-            <div>
-            <input type="number" id="rep-custom" placeholder="Reps" min="1" max="30" step="1">
-            </div>
+    <!-- Add exercise trigger -->
+    <button id="add-exercise">+ Add Exercise</button>
 
-            <div>
-                <input type="range" id="rep-range" min="1" max="30" step="1">
-                <output id="rep-range-value"></output>
-                <div>
-                    <input type="number" id="rep-min" value="8" min="1" max="30">
-                    <input type="number" id="rep-max" value="12" min="1" max="30">
-                </div>
-            </div>
+    <!-- Inline add exercise panel -->
+    <fieldset id="add-exercise-panel" hidden>
+      <div>
+        <label for="exercise-name">Exercise</label>
+        <input
+          type="text"
+          id="exercise-name"
+          placeholder="Start typing..."
+          autocomplete="off"
+        >
+      </div>
 
+      <ul id="exercise-suggestions"></ul>
 
-        </fieldset>
+      <button id="save-exercise" type="button">Add to Routine</button>
+      <button id="cancel-add" type="button">Cancel</button>
     </fieldset>
-
-    <fieldset>
-        <h3>Routines</h3>
-        <button id="add-routine">+ Add Routine</button> <!--Make routine out of repertoire-->
-    </fieldset>
+  </fieldset>
 
 </body>
 </html>

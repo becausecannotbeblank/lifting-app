@@ -1,55 +1,106 @@
-const addExercise   = document.getElementById('add-exercise');
+// --- Data (for now just in memory) ---
 
-const repNumber     = document.getElementById('rep-number');
-const repSetRange   = document.getElementById('rep-set-range');
+// Existing known exercises (your “database”)
+const exerciseDb = [
+  "Bench Press",
+  "Incline Bench Press",
+  "Overhead Press",
+  "Squat",
+  "Front Squat",
+  "Deadlift",
+  "Romanian Deadlift",
+  "Barbell Row",
+  "Pull-up",
+  "Lat Pulldown",
+];
 
-const repCustom     = document.getElementById('rep-custom'); // the number input
-const repRange      = document.getElementById('rep-range');  // the slider
-const repRangeValue = document.getElementById('rep-range-value');
+// Current routine = list of exercise names in order
+const routine = [];
 
-const repMin = document.getElementById('rep-min');
-const repMax = document.getElementById('rep-max');
+// --- Elements ---
 
-function getRepRange() {
-    return {
-        min: parseInt(repMin.value),
-        max: parseInt(repMax.value)
-    };
+const routineList       = document.getElementById('routine-list');
+const addExerciseBtn    = document.getElementById('add-exercise');
+const panel             = document.getElementById('add-exercise-panel');
+const exerciseInput     = document.getElementById('exercise-name');
+const suggestionsEl     = document.getElementById('exercise-suggestions');
+const saveExerciseBtn   = document.getElementById('save-exercise');
+const cancelAddBtn      = document.getElementById('cancel-add');
+
+// --- Helpers ---
+
+function openAddPanel() {
+  panel.hidden = false;
+  exerciseInput.value = '';
+  suggestionsEl.innerHTML = '';
+  exerciseInput.focus();
 }
 
+function closeAddPanel() {
+  panel.hidden = true;
+  exerciseInput.value = '';
+  suggestionsEl.innerHTML = '';
+}
 
-// Show the exercise card
-addExercise.addEventListener("click", () => {
-  document.getElementById("set-exercise").style.display = 'block';
+function renderRoutine() {
+  routineList.innerHTML = '';
+
+  routine.forEach((name, index) => {
+    const item = document.createElement('div');
+    item.className = 'routine-item';
+    item.textContent = `${index + 1}. ${name}`;
+    routineList.appendChild(item);
+  });
+}
+
+function renderSuggestions(query) {
+  if (!query) {
+    suggestionsEl.innerHTML = '';
+    return;
+  }
+
+  const matches = exerciseDb
+    .filter(name => name.toLowerCase().includes(query.toLowerCase()))
+    .slice(0, 5);
+
+  suggestionsEl.innerHTML = matches
+    .map(name => `<li class="suggestion-item">${name}</li>`)
+    .join('');
+}
+
+// --- Events ---
+
+addExerciseBtn.addEventListener('click', openAddPanel);
+
+cancelAddBtn.addEventListener('click', closeAddPanel);
+
+exerciseInput.addEventListener('input', () => {
+  const query = exerciseInput.value.trim();
+  renderSuggestions(query);
 });
 
-// Update UI based on which radio is selected
-function updateRepMode() {
-  if (repNumber.checked) {
-    repCustom.hidden = false;  // show custom reps
-    repRange.hidden  = true;   // hide slider
-    repMin.hidden = true;
-    repMax.hidden = true; 
-    if (repRangeValue) repRangeValue.hidden = true;
-  } else {
-    repCustom.hidden = true;   // hide custom reps
-    repRange.hidden  = false;  // show slider
-    repMin.hidden = false;
-    repMax.hidden = false; 
-    if (repRangeValue) repRangeValue.hidden = false;
+suggestionsEl.addEventListener('click', (e) => {
+  if (e.target.classList.contains('suggestion-item')) {
+    exerciseInput.value = e.target.textContent;
+    suggestionsEl.innerHTML = '';
+    exerciseInput.focus();
   }
-}
+});
 
-// Keep slider value visible (optional)
-function updateRangeValue() {
-  if (repRangeValue) repRangeValue.textContent = repRange.value;
-}
+saveExerciseBtn.addEventListener('click', () => {
+  const name = exerciseInput.value.trim();
+  if (!name) {
+    alert('Name the exercise first.');
+    return;
+  }
 
-// Wire up events
-repNumber.addEventListener('change', updateRepMode);
-repSetRange.addEventListener('change', updateRepMode);
-repRange.addEventListener('input', updateRangeValue);
+  // If this is a new custom exercise, add it to the DB
+  if (!exerciseDb.includes(name)) {
+    exerciseDb.push(name);
+  }
 
-// Initialize correct state on load
-updateRepMode();
-updateRangeValue();
+  // Add to routine
+  routine.push(name);
+  renderRoutine();
+  closeAddPanel();
+});
