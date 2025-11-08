@@ -1,6 +1,4 @@
-// --- Data (for now just in memory) ---
-
-// Existing known exercises (your “database”)
+// Simple exercise "database"
 const exerciseDb = [
   "Bench Press",
   "Incline Bench Press",
@@ -12,95 +10,125 @@ const exerciseDb = [
   "Barbell Row",
   "Pull-up",
   "Lat Pulldown",
+  "Side Lateral Raise",
+  "Dumbbell Curls",
+  "Barbell Curls",
+  "Incline Dumbbell Curls"
 ];
 
-// Current routine = list of exercise names in order
-const routine = [];
+const addRoutineBtn = document.getElementById('add-routine');
+const routinesContainer = document.getElementById('routines');
 
-// --- Elements ---
+let routineCount = 0;
 
-const routineList       = document.getElementById('routine-list');
-const addExerciseBtn    = document.getElementById('add-exercise');
-const panel             = document.getElementById('add-exercise-panel');
-const exerciseInput     = document.getElementById('exercise-name');
-const suggestionsEl     = document.getElementById('exercise-suggestions');
-const saveExerciseBtn   = document.getElementById('save-exercise');
-const cancelAddBtn      = document.getElementById('cancel-add');
+function createRoutine() {
+  routineCount += 1;
+  const routine = [];
 
-// --- Helpers ---
+  const fieldset = document.createElement('fieldset');
+  fieldset.className = 'routine';
 
-function openAddPanel() {
-  panel.hidden = false;
-  exerciseInput.value = '';
-  suggestionsEl.innerHTML = '';
-  exerciseInput.focus();
-}
+  const title = document.createElement('h3');
+  title.textContent = `Routine ${routineCount}`;
+  fieldset.appendChild(title);
 
-function closeAddPanel() {
+  const list = document.createElement('div');
+  list.className = 'routine-list';
+  fieldset.appendChild(list);
+
+  const addExerciseBtn = document.createElement('button');
+  addExerciseBtn.textContent = '+ Add Exercise';
+  addExerciseBtn.type = 'button';
+  fieldset.appendChild(addExerciseBtn);
+
+  const panel = document.createElement('fieldset');
+  panel.className = 'add-exercise-panel';
   panel.hidden = true;
-  exerciseInput.value = '';
-  suggestionsEl.innerHTML = '';
-}
+  panel.innerHTML = `
+    <div>
+      <label>Exercise</label>
+      <input type="text" class="exercise-name" placeholder="Start typing..." autocomplete="off">
+    </div>
+    <ul class="exercise-suggestions"></ul>
+    <button type="button" class="save-exercise">Add to Routine</button>
+    <button type="button" class="cancel-add">Cancel</button>
+  `;
+  fieldset.appendChild(panel);
 
-function renderRoutine() {
-  routineList.innerHTML = '';
+  routinesContainer.appendChild(fieldset);
 
-  routine.forEach((name, index) => {
-    const item = document.createElement('div');
-    item.className = 'routine-item';
-    item.textContent = `${index + 1}. ${name}`;
-    routineList.appendChild(item);
+  const input       = panel.querySelector('.exercise-name');
+  const suggestions = panel.querySelector('.exercise-suggestions');
+  const saveBtn     = panel.querySelector('.save-exercise');
+  const cancelBtn   = panel.querySelector('.cancel-add');
+
+  function renderRoutineList() {
+    list.innerHTML = '';
+    routine.forEach((name, i) => {
+      const item = document.createElement('div');
+      item.className = 'routine-item';
+      item.textContent = `${i + 1}. ${name}`;
+      list.appendChild(item);
+    });
+  }
+
+  function renderSuggestions(query) {
+    if (!query) {
+      suggestions.innerHTML = '';
+      return;
+    }
+    const matches = exerciseDb
+      .filter(name => name.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, 5);
+    suggestions.innerHTML = matches
+      .map(name => `<li class="suggestion-item">${name}</li>`)
+      .join(''); 
+  }
+
+  function openPanel() {
+    panel.hidden = false;
+    input.value = '';
+    suggestions.innerHTML = '';
+    input.focus();
+  }
+
+  function closePanel() {
+    panel.hidden = true;
+    input.value = '';
+    suggestions.innerHTML = '';
+  }
+
+  addExerciseBtn.addEventListener('click', openPanel);
+  cancelBtn.addEventListener('click', closePanel);
+
+  input.addEventListener('input', () => {
+    renderSuggestions(input.value.trim());
+  });
+
+  suggestions.addEventListener('click', (e) => {
+    if (e.target.classList.contains('suggestion-item')) {
+      input.value = e.target.textContent;
+      suggestions.innerHTML = '';
+      input.focus();
+    }
+  });
+
+  saveBtn.addEventListener('click', () => {
+    const name = input.value.trim();
+    if (!name) {
+      alert('Name the exercise first.');
+      return;
+    }
+    if (!exerciseDb.includes(name)) {
+      exerciseDb.push(name);
+    }
+    routine.push(name);
+    renderRoutineList();
+    closePanel();
   });
 }
 
-function renderSuggestions(query) {
-  if (!query) {
-    suggestionsEl.innerHTML = '';
-    return;
-  }
+addRoutineBtn.addEventListener('click', createRoutine);
 
-  const matches = exerciseDb
-    .filter(name => name.toLowerCase().includes(query.toLowerCase()))
-    .slice(0, 5);
-
-  suggestionsEl.innerHTML = matches
-    .map(name => `<li class="suggestion-item">${name}</li>`)
-    .join('');
-}
-
-// --- Events ---
-
-addExerciseBtn.addEventListener('click', openAddPanel);
-
-cancelAddBtn.addEventListener('click', closeAddPanel);
-
-exerciseInput.addEventListener('input', () => {
-  const query = exerciseInput.value.trim();
-  renderSuggestions(query);
-});
-
-suggestionsEl.addEventListener('click', (e) => {
-  if (e.target.classList.contains('suggestion-item')) {
-    exerciseInput.value = e.target.textContent;
-    suggestionsEl.innerHTML = '';
-    exerciseInput.focus();
-  }
-});
-
-saveExerciseBtn.addEventListener('click', () => {
-  const name = exerciseInput.value.trim();
-  if (!name) {
-    alert('Name the exercise first.');
-    return;
-  }
-
-  // If this is a new custom exercise, add it to the DB
-  if (!exerciseDb.includes(name)) {
-    exerciseDb.push(name);
-  }
-
-  // Add to routine
-  routine.push(name);
-  renderRoutine();
-  closeAddPanel();
-});
+// Start with one routine by default
+createRoutine();

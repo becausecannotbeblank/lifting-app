@@ -6,27 +6,32 @@ body {
   font-family: system-ui, sans-serif;
 }
 
-#routine-list {
+.routine {
+  margin: 1em;
+  padding: 1em;
+}
+
+.routine-list {
   display: flex;
   flex-direction: column;
   gap: 0.25em;
-  margin-bottom: 0.5em;
+  margin: 0.5em 0;
 }
 
 .routine-item {
   padding: 0.35em 0.6em;
   border-radius: 4px;
   border: 1px solid #ccc;
-  font-size: 0.9rem;
   background: #f7f7f7;
+  font-size: 0.9rem;
 }
 
-#add-exercise-panel {
+.add-exercise-panel {
   margin-top: 0.5em;
   padding: 0.5em;
 }
 
-#exercise-suggestions {
+.exercise-suggestions {
   list-style: none;
   padding: 0;
   margin: 0.25em 0;

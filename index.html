@@ -9,35 +9,12 @@
 </head>
 <body>
 
-  <button>Menu</button> <!-- later: KG/lbs, etc -->
+  <button>Menu</button>
 
-  <fieldset>
-    <h3>Routine</h3>
+  <button id="add-routine">+ Add Routine</button>
 
-    <!-- Where routine exercises appear -->
-    <div id="routine-list"></div>
-
-    <!-- Add exercise trigger -->
-    <button id="add-exercise">+ Add Exercise</button>
-
-    <!-- Inline add exercise panel -->
-    <fieldset id="add-exercise-panel" hidden>
-      <div>
-        <label for="exercise-name">Exercise</label>
-        <input
-          type="text"
-          id="exercise-name"
-          placeholder="Start typing..."
-          autocomplete="off"
-        >
-      </div>
-
-      <ul id="exercise-suggestions"></ul>
-
-      <button id="save-exercise" type="button">Add to Routine</button>
-      <button id="cancel-add" type="button">Cancel</button>
-    </fieldset>
-  </fieldset>
+  <!-- All routines get added here -->
+  <div id="routines"></div>
 
 </body>
 </html>
